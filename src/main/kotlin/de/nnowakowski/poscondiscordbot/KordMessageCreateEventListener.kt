@@ -44,6 +44,15 @@ class KordMessageCreateEventListener(
                         createFlightEmbed(this, posconOnlineResponse, posconOnlineResponse.flights)
                     }
                 }
+                "!online" -> {
+                    val posconOnlineResponse = posconClient.getOnlineUsers().awaitSingle()
+                    messageCreateEvent.message.channel.createEmbed {
+                        createAtcEmbed(this, posconOnlineResponse, posconOnlineResponse.atc, true)
+                    }
+                    messageCreateEvent.message.channel.createEmbed {
+                        createFlightEmbed(this, posconOnlineResponse, posconOnlineResponse.flights, true)
+                    }
+                }
                 "!upcoming" -> {
                     val posconOnlineResponse = posconClient.getOnlineUsers().awaitSingle()
                     messageCreateEvent.message.channel.createEmbed {
