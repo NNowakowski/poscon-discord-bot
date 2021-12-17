@@ -72,15 +72,23 @@ class KordMessageCreateEventListener(
         flightArray: Array<Flight>,
         showCurrent: Boolean = true
     ) {
-        if (showCurrent) {
-            embedBuilder.title = "Online pilots: ${flightArray.size}"
+        embedBuilder.title = if (showCurrent) {
+            "Online pilots: ${flightArray.size}"
         } else {
-            embedBuilder.title = "Upcoming flights: ${flightArray.size}"
+            "Upcoming flights: ${flightArray.size}"
         }
 
         flightArray.forEach {
             embedBuilder.field {
-                name = "${it.callsign ?: "N/A"} (${it.acTpe ?: "N/A"})"
+                name = if (showCurrent) {
+                    "${it.callsign ?: "N/A"} (${it.acTpe ?: "N/A"})"
+                } else {
+                    "${it.callsign ?: "N/A"} (${it.acTpe ?: "N/A"}) - ${
+                        it.std?.format(
+                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+                        )
+                    }"
+                }
                 inline = false
                 value =
                     "From ${it.flightplan?.dep ?: "N/A"} to ${it.flightplan?.dest ?: "N/A"} (Alternate ${it.flightplan?.altnt ?: "N/A"})"
@@ -102,15 +110,23 @@ class KordMessageCreateEventListener(
         atcArray: Array<Atc>,
         showCurrent: Boolean = true
     ) {
-        if (showCurrent) {
-            embedBuilder.title = "Online ATC: ${atcArray.size}"
+        embedBuilder.title = if (showCurrent) {
+            "Online ATC: ${atcArray.size}"
         } else {
-            embedBuilder.title = "Upcoming ATC: ${atcArray.size}"
+            "Upcoming ATC: ${atcArray.size}"
         }
 
         atcArray.forEach {
             embedBuilder.field {
-                name = "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"})"
+                name = if (showCurrent) {
+                    "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"})"
+                } else {
+                    "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"}) - ${
+                        it.start?.format(
+                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+                        )
+                    }"
+                }
                 inline = false
                 value = "VHF ${it.vhfFreq ?: "N/A"}"
             }

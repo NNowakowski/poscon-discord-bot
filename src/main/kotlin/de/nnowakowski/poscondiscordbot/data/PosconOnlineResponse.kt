@@ -12,9 +12,18 @@ data class PosconOnlineResponse(
 )
 
 data class Flight(
-    val callsign: String?, @JsonProperty("ac_type") val acTpe: String?, val flightplan: Flightplan?
+    val callsign: String?,
+    @JsonProperty("ac_type") val acTpe: String?,
+    val flightplan: Flightplan?,
+    val std: ZonedDateTime?
 )
 
 data class Flightplan(val altnt: String?, val dep: String?, val dest: String?)
 
-data class Atc(val telephony: String?, val fir: String?, val type: String?, val vhfFreq: String?)
+data class Atc(
+    val telephony: String?,
+    val fir: String?,
+    val type: String?,
+    val vhfFreq: String?,
+    val start: ZonedDateTime?
+)
