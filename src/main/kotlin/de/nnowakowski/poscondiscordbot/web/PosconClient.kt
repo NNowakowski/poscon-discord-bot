@@ -1,4 +1,4 @@
-package de.nnowakowski.poscondiscordbot
+package de.nnowakowski.poscondiscordbot.web
 
 import de.nnowakowski.poscondiscordbot.data.PosconOnlineResponse
 import org.springframework.beans.factory.annotation.Autowired

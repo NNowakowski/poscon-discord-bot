@@ -5,20 +5,25 @@ import java.time.ZonedDateTime
 
 data class PosconOnlineResponse(
     val lastUpdated: ZonedDateTime?,
-    val atc: Array<Atc>,
-    val upcomingAtc: Array<Atc>,
-    val flights: Array<Flight>,
-    val upcomingFlights: Array<Flight>
+    val atc: Set<Atc>,
+    val upcomingAtc: Set<Atc>,
+    val flights: Set<Flight>,
+    val upcomingFlights: Set<Flightplan>
 )
 
 data class Flight(
     val callsign: String?,
-    @JsonProperty("ac_type") val acTpe: String?,
-    val flightplan: Flightplan?,
-    val std: ZonedDateTime?
+    @JsonProperty("ac_type") val acType: String?,
+    val flightplan: Flightplan?
 )
 
-data class Flightplan(val altnt: String?, val dep: String?, val dest: String?)
+data class Flightplan(
+    val callsign: String?,
+    @JsonProperty("ac_type") val acType: String?,
+    val dep: String?,
+    val dest: String?,
+    val std: ZonedDateTime?
+)
 
 data class Atc(
     val telephony: String?,

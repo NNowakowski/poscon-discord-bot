@@ -1,5 +1,7 @@
-package de.nnowakowski.poscondiscordbot
+package de.nnowakowski.poscondiscordbot.kord
 
+import de.nnowakowski.poscondiscordbot.kord.listener.MessageCreateEventListener
+import de.nnowakowski.poscondiscordbot.web.PosconClient
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component
 class DiscordClient(
     @Value("\${discord.bot.token}") private val discordBotToken: String,
     @Value("\${discord.status-update.interval-in-ms}") private val discordStatusUpdateIntervalInMs: Long,
-    @Autowired private val kordMessageCreateEventListener: KordMessageCreateEventListener,
+    @Autowired private val messageCreateEventListener: MessageCreateEventListener,
     @Autowired private val posconClient: PosconClient
 ) {
     @EventListener(ApplicationReadyEvent::class)
@@ -27,7 +29,7 @@ class DiscordClient(
             val kord: Kord = Kord(discordBotToken)
 
             kord.on<MessageCreateEvent> {
-                kordMessageCreateEventListener.handle(kord, this)
+                messageCreateEventListener.handle(kord, this)
             }
 
             launch {
