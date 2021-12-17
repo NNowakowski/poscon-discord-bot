@@ -30,7 +30,12 @@ class KordMessageCreateEventListener(
                     }
                 }
                 "!invite" -> {
-                    messageCreateEvent.message.channel.createMessage("https://discord.com/api/oauth2/authorize?client_id=${discordOauth2ClientId}&permissions=${discordOauth2Permissions}&scope=${discordOauth2Scope}")
+                    messageCreateEvent.message.channel.createMessage(
+                        "https://discord.com/api/oauth2/authorize" +
+                            "?client_id=$discordOauth2ClientId" +
+                            "&permissions=$discordOauth2Permissions" +
+                            "&scope=$discordOauth2Scope"
+                    )
                 }
                 "!atc" -> {
                     val posconOnlineResponse = posconClient.getOnlineUsers().awaitSingle()
@@ -84,22 +89,24 @@ class KordMessageCreateEventListener(
                     "${it.callsign ?: "N/A"} (${it.acTpe ?: "N/A"})"
                 } else {
                     "${it.callsign ?: "N/A"} (${it.acTpe ?: "N/A"}) - ${
-                        it.std?.format(
-                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
-                        )
+                    it.std?.format(
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+                    )
                     }"
                 }
                 inline = false
                 value =
-                    "From ${it.flightplan?.dep ?: "N/A"} to ${it.flightplan?.dest ?: "N/A"} (Alternate ${it.flightplan?.altnt ?: "N/A"})"
+                    "From ${it.flightplan?.dep ?: "N/A"} " +
+                    "to ${it.flightplan?.dest ?: "N/A"} " +
+                    "(Alternate ${it.flightplan?.altnt ?: "N/A"})"
             }
         }
 
         embedBuilder.footer {
             text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
-                )
+            posconOnlineResponse.lastUpdated?.format(
+                DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+            )
             }"
         }
     }
@@ -122,9 +129,9 @@ class KordMessageCreateEventListener(
                     "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"})"
                 } else {
                     "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"}) - ${
-                        it.start?.format(
-                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
-                        )
+                    it.start?.format(
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+                    )
                     }"
                 }
                 inline = false
@@ -134,9 +141,9 @@ class KordMessageCreateEventListener(
 
         embedBuilder.footer {
             text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
-                )
+            posconOnlineResponse.lastUpdated?.format(
+                DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm (z)")
+            )
             }"
         }
     }
