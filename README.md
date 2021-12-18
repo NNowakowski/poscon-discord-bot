@@ -9,6 +9,7 @@ receive more and more commands.
 #### Connected Endpoints
 
 * [Online Data](https://cdn.poscon.com/docs/services/index.html#operation/get-online-data)
+* [Metar](https://cdn.poscon.com/docs/services/index.html#operation/get-metar-ICAO)
 
 ### Languages & Frameworks
 
