@@ -29,7 +29,7 @@ class DiscordClient(
             val kord: Kord = Kord(discordBotToken)
 
             kord.on<MessageCreateEvent> {
-                messageCreateEventListener.handle(kord, this)
+                messageCreateEventListener.handle(this)
             }
 
             launch {

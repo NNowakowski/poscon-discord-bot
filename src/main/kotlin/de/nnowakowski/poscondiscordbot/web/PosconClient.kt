@@ -1,5 +1,6 @@
 package de.nnowakowski.poscondiscordbot.web
 
+import de.nnowakowski.poscondiscordbot.data.PosconMetarResponse
 import de.nnowakowski.poscondiscordbot.data.PosconOnlineResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -16,6 +17,7 @@ class PosconClient(
     @Value("\${poscon.api.retry-count}") private val posconApiRetryCount: Long
 ) {
     private val webClient: WebClient = webClientBuilder.baseUrl("https://hqapi.poscon.net/").build()
+    private val servicesWebClient: WebClient = webClientBuilder.baseUrl("https://services.poscon.com/").build()
 
     fun getOnlineUsers(): Flux<PosconOnlineResponse> {
         return webClient.get().uri("online.json").retrieve().bodyToFlux<PosconOnlineResponse>()
@@ -24,5 +26,13 @@ class PosconClient(
                     println("Couldn't reach API, retrying ...")
                 }
             )
+    }
+
+    fun getMetarInfo(icao: String): Flux<PosconMetarResponse> {
+        return servicesWebClient.get().uri("metar/$icao").retrieve().bodyToFlux<PosconMetarResponse>().retryWhen(
+            Retry.backoff(posconApiRetryCount, Duration.ofSeconds(2)).doBeforeRetry {
+                println("Couldn't reach API, retrying ...")
+            }
+        )
     }
 }

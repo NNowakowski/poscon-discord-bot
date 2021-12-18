@@ -1,7 +1,7 @@
 package de.nnowakowski.poscondiscordbot.kord.embedbuilder
 
 import de.nnowakowski.poscondiscordbot.data.PosconOnlineResponse
-import dev.kord.core.behavior.channel.createEmbed
+import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
@@ -12,33 +12,35 @@ class PosconOnlineEmbedBuilder {
         messageCreateEvent: MessageCreateEvent,
         posconOnlineResponse: PosconOnlineResponse
     ) {
-        messageCreateEvent.message.channel.createEmbed {
-            title = "Online pilots: ${posconOnlineResponse.flights.size}"
+        messageCreateEvent.message.reply {
+            embed {
+                title = "Online pilots: ${posconOnlineResponse.flights.size}"
 
-            posconOnlineResponse.flights.forEach {
-                field {
-                    name = if (it.flightplan != null) {
-                        "${it.flightplan.callsign ?: "N/A"} (${it.flightplan.acType ?: "N/A"})"
-                    } else {
-                        "${it.callsign ?: "N/A"} (${it.acType ?: "N/A"})"
-                    }
+                posconOnlineResponse.flights.forEach {
+                    field {
+                        name = if (it.flightplan != null) {
+                            "${it.flightplan.callsign ?: "N/A"} (${it.flightplan.acType ?: "N/A"})"
+                        } else {
+                            "${it.callsign ?: "N/A"} (${it.acType ?: "N/A"})"
+                        }
 
-                    inline = false
+                        inline = false
 
-                    value = if (it.flightplan != null) {
-                        "From ${it.flightplan.dep ?: "N/A"} to ${it.flightplan.dest ?: "N/A"}"
-                    } else {
-                        "No active flightplan"
+                        value = if (it.flightplan != null) {
+                            "From ${it.flightplan.dep ?: "N/A"} to ${it.flightplan.dest ?: "N/A"}"
+                        } else {
+                            "No active flightplan"
+                        }
                     }
                 }
-            }
 
-            footer {
-                text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
-                )
-                }"
+                footer {
+                    text = "Fetched at: ${
+                    posconOnlineResponse.lastUpdated?.format(
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
+                    )
+                    }"
+                }
             }
         }
     }
@@ -47,27 +49,29 @@ class PosconOnlineEmbedBuilder {
         messageCreateEvent: MessageCreateEvent,
         posconOnlineResponse: PosconOnlineResponse
     ) {
-        messageCreateEvent.message.channel.createEmbed {
-            title = "Upcoming flights: ${posconOnlineResponse.upcomingFlights.size}"
+        messageCreateEvent.message.reply {
+            embed {
+                title = "Upcoming flights: ${posconOnlineResponse.upcomingFlights.size}"
 
-            posconOnlineResponse.upcomingFlights.forEach {
-                field {
-                    name = "${it.callsign ?: "N/A"} (${it.acType ?: "N/A"}) - ${
-                    it.std?.format(
+                posconOnlineResponse.upcomingFlights.forEach {
+                    field {
+                        name = "${it.callsign ?: "N/A"} (${it.acType ?: "N/A"}) - ${
+                        it.std?.format(
+                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
+                        )
+                        }"
+                        inline = false
+                        value = "From ${it.dep ?: "N/A"} to ${it.dest ?: "N/A"}"
+                    }
+                }
+
+                footer {
+                    text = "Fetched at: ${
+                    posconOnlineResponse.lastUpdated?.format(
                         DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
                     )
                     }"
-                    inline = false
-                    value = "From ${it.dep ?: "N/A"} to ${it.dest ?: "N/A"}"
                 }
-            }
-
-            footer {
-                text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
-                )
-                }"
             }
         }
     }
@@ -76,23 +80,25 @@ class PosconOnlineEmbedBuilder {
         messageCreateEvent: MessageCreateEvent,
         posconOnlineResponse: PosconOnlineResponse
     ) {
-        messageCreateEvent.message.channel.createEmbed {
-            title = "Online ATC: ${posconOnlineResponse.atc.size}"
+        messageCreateEvent.message.reply {
+            embed {
+                title = "Online ATC: ${posconOnlineResponse.atc.size}"
 
-            posconOnlineResponse.atc.forEach {
-                field {
-                    name = "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"})"
-                    inline = false
-                    value = "VHF ${it.vhfFreq ?: "N/A"}"
+                posconOnlineResponse.atc.forEach {
+                    field {
+                        name = "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"})"
+                        inline = false
+                        value = "VHF ${it.vhfFreq ?: "N/A"}"
+                    }
                 }
-            }
 
-            footer {
-                text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
-                )
-                }"
+                footer {
+                    text = "Fetched at: ${
+                    posconOnlineResponse.lastUpdated?.format(
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
+                    )
+                    }"
+                }
             }
         }
     }
@@ -101,27 +107,29 @@ class PosconOnlineEmbedBuilder {
         messageCreateEvent: MessageCreateEvent,
         posconOnlineResponse: PosconOnlineResponse
     ) {
-        messageCreateEvent.message.channel.createEmbed {
-            title = "Upcoming ATC: ${posconOnlineResponse.upcomingAtc.size}"
+        messageCreateEvent.message.reply {
+            embed {
+                title = "Upcoming ATC: ${posconOnlineResponse.upcomingAtc.size}"
 
-            posconOnlineResponse.upcomingAtc.forEach {
-                field {
-                    name = "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"}) - ${
-                    it.start?.format(
+                posconOnlineResponse.upcomingAtc.forEach {
+                    field {
+                        name = "${it.telephony ?: "N/A"} - ${it.type ?: "N/A"} (${it.fir ?: "N/A"}) - ${
+                        it.start?.format(
+                            DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
+                        )
+                        }"
+                        inline = false
+                        value = "VHF ${it.vhfFreq ?: "N/A"}"
+                    }
+                }
+
+                footer {
+                    text = "Fetched at: ${
+                    posconOnlineResponse.lastUpdated?.format(
                         DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
                     )
                     }"
-                    inline = false
-                    value = "VHF ${it.vhfFreq ?: "N/A"}"
                 }
-            }
-
-            footer {
-                text = "Fetched at: ${
-                posconOnlineResponse.lastUpdated?.format(
-                    DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm z")
-                )
-                }"
             }
         }
     }
