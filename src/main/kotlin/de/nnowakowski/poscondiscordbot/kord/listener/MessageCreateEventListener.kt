@@ -2,6 +2,7 @@ package de.nnowakowski.poscondiscordbot.kord.listener
 
 import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconMetarEmbedBuilder
 import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconOnlineEmbedBuilder
+import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconTafEmbedBuilder
 import de.nnowakowski.poscondiscordbot.web.PosconClient
 import dev.kord.core.behavior.reply
 import dev.kord.core.event.message.MessageCreateEvent
@@ -19,7 +20,8 @@ class MessageCreateEventListener(
     @Value("\${poscon.api.icao-length}") private val posconApiIcaoLength: Int,
     @Autowired private val posconClient: PosconClient,
     @Autowired private val posconOnlineEmbedBuilder: PosconOnlineEmbedBuilder,
-    @Autowired private val posconMetarEmbedBuilder: PosconMetarEmbedBuilder
+    @Autowired private val posconMetarEmbedBuilder: PosconMetarEmbedBuilder,
+    @Autowired private val posconTafEmbedBuilder: PosconTafEmbedBuilder
 ) {
     suspend fun handle(messageCreateEvent: MessageCreateEvent) {
         if (messageCreateEvent.message.author?.isBot == false) {
@@ -61,6 +63,18 @@ class MessageCreateEventListener(
                         } else {
                             val posconMetarResponse = posconClient.getMetarInfo(icao).awaitSingle()
                             posconMetarEmbedBuilder.createMetarEmbed(messageCreateEvent, posconMetarResponse)
+                        }
+                    }
+                    contains("!taf") -> {
+                        val icao: String = split(" ").last()
+
+                        if (icao.length != posconApiIcaoLength) {
+                            messageCreateEvent.message.reply {
+                                content = "Entered parameter must be $posconApiIcaoLength characters long!"
+                            }
+                        } else {
+                            val posconTafResponse = posconClient.getTafInfo(icao).awaitSingle()
+                            posconTafEmbedBuilder.createTafEmbed(messageCreateEvent, posconTafResponse)
                         }
                     }
                     else -> {}
