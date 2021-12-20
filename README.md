@@ -10,6 +10,7 @@ receive more and more commands.
 
 * [Online Data](https://cdn.poscon.com/docs/services/index.html#operation/get-online-data)
 * [Metar](https://cdn.poscon.com/docs/services/index.html#operation/get-metar-ICAO)
+* [Taf](https://cdn.poscon.com/docs/services/index.html#operation/get-taf-ICAO)
 
 ### Languages & Frameworks
 
