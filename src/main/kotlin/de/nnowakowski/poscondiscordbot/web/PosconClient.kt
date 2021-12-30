@@ -1,6 +1,7 @@
 package de.nnowakowski.poscondiscordbot.web
 
 import de.nnowakowski.poscondiscordbot.data.PosconMetarResponse
+import de.nnowakowski.poscondiscordbot.data.PosconMetarTafResponse
 import de.nnowakowski.poscondiscordbot.data.PosconOnlineResponse
 import de.nnowakowski.poscondiscordbot.data.PosconTafResponse
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,6 +40,14 @@ class PosconClient(
 
     fun getTafInfo(icao: String): Flux<PosconTafResponse> {
         return servicesWebClient.get().uri("taf/$icao").retrieve().bodyToFlux<PosconTafResponse>().retryWhen(
+            Retry.backoff(posconApiRetryCount, Duration.ofSeconds(2)).doBeforeRetry {
+                println("Couldn't reach API, retrying ...")
+            }
+        )
+    }
+
+    fun getMetarTafInfo(icao: String): Flux<PosconMetarTafResponse> {
+        return servicesWebClient.get().uri("metartaf/$icao").retrieve().bodyToFlux<PosconMetarTafResponse>().retryWhen(
             Retry.backoff(posconApiRetryCount, Duration.ofSeconds(2)).doBeforeRetry {
                 println("Couldn't reach API, retrying ...")
             }
