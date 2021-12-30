@@ -1,6 +1,7 @@
 package de.nnowakowski.poscondiscordbot.kord.listener
 
 import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconMetarEmbedBuilder
+import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconMetarTafEmbedBuilder
 import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconOnlineEmbedBuilder
 import de.nnowakowski.poscondiscordbot.kord.embedbuilder.PosconTafEmbedBuilder
 import de.nnowakowski.poscondiscordbot.web.PosconClient
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-@SuppressWarnings("LongParameterList", "NestedBlockDepth")
+@SuppressWarnings("LongParameterList", "NestedBlockDepth", "LongMethod", "ComplexMethod")
 class MessageCreateEventListener(
     @Value("\${discord.oauth2.client-id}") private val discordOauth2ClientId: String,
     @Value("\${discord.oauth2.permissions}") private val discordOauth2Permissions: String,
@@ -21,7 +22,8 @@ class MessageCreateEventListener(
     @Autowired private val posconClient: PosconClient,
     @Autowired private val posconOnlineEmbedBuilder: PosconOnlineEmbedBuilder,
     @Autowired private val posconMetarEmbedBuilder: PosconMetarEmbedBuilder,
-    @Autowired private val posconTafEmbedBuilder: PosconTafEmbedBuilder
+    @Autowired private val posconTafEmbedBuilder: PosconTafEmbedBuilder,
+    @Autowired private val posconMetarTafEmbedBuilder: PosconMetarTafEmbedBuilder
 ) {
     suspend fun handle(messageCreateEvent: MessageCreateEvent) {
         if (messageCreateEvent.message.author?.isBot == false) {
@@ -52,6 +54,18 @@ class MessageCreateEventListener(
                         val posconOnlineResponse = posconClient.getOnlineUsers().awaitSingle()
                         posconOnlineEmbedBuilder.createUpcomingAtcEmbed(messageCreateEvent, posconOnlineResponse)
                         posconOnlineEmbedBuilder.createUpcomingFlightEmbed(messageCreateEvent, posconOnlineResponse)
+                    }
+                    contains("!metartaf") -> {
+                        val icao: String = split(" ").last()
+
+                        if (icao.length != posconApiIcaoLength) {
+                            messageCreateEvent.message.reply {
+                                content = "Entered parameter must be $posconApiIcaoLength characters long!"
+                            }
+                        } else {
+                            val posconMetarTafResponse = posconClient.getMetarTafInfo(icao).awaitSingle()
+                            posconMetarTafEmbedBuilder.createMetarTafEmbed(messageCreateEvent, posconMetarTafResponse)
+                        }
                     }
                     contains("!metar") -> {
                         val icao: String = split(" ").last()
